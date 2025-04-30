@@ -341,12 +341,16 @@ public:
     } 
     void addUser(string username, string password, bool isAdmin) { ///<adds a user to the system
         ///< checks if the user already exists in the system
-        if(this->getUser(username)->username != "") {
-            std::cout << "Error: User already exists" << std::endl;
-            return;
+        ///< check if user with given username already exists
+        for(int i = 0; i < users.size(); i++) {
+            if(users[i].username == username) {
+                std::cout << "Error: User already exists" << std::endl;
+                return;
+            }
         }
         /** adds a user to the system */
-        users.push_back(User(username, password, isAdmin));
+        this->users.push_back(User(username, password, isAdmin));
+        saveUsers(); ///< saves the users to the file
         return;
     }
     string getName() const { ///< returns the name of the bank

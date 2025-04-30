@@ -1,2 +1,3 @@
 admin,harrison,chb12345
 teller,john,abc123
+admin,fred,fdp5
