@@ -98,29 +98,12 @@ class Client {
     string employer;
     std::vector<Account> accounts;
 public:
-    void addAccount(Account newAcct) { //COMPLETE
+    void addAccount(const Account& newAcct) { //COMPLETE
         accounts.push_back(newAcct); ///< adds an account to the clients account list
         return;
     }
 
-    void printAccounts() { //COMPLETE
-        /** prints each account in the accounts list by their account number, type, and balance */
-        for (const auto& account : accounts) {
-            std::cout << "Account: " << account.getAccountNumber() << ": " << account.getAccountType() << ": " << account.getBalance() << std::endl;
-        }
-        return;
-    }
-
-    Account getAccount(const string& accountNumber) { // COMPLETE
-        /** returns the account with the given account number */
-        for (const auto& account : accounts) {
-            if (account.getAccountNumber() == accountNumber) {
-                return account; // Return the matching account
-            }
-        }
-        std::cout << "Error: Account not found" << std::endl;
-        return Account(0.0, "", "", ""); // Return a default Account object if not found
-    }
+    void printAccounts();
 
     void setAddress(string newAddress) { //COMPLETE
         /** sets the address of the client */
@@ -172,21 +155,29 @@ public:
         }
         return;
     }
-    string getAccountType() { /** returns the account type */
+    string getAccountType() const{ /** returns the account type */
         return accountType;
     }
-    string getAccountNumber() { /** returns the account number */
+    string getAccountNumber() const{ /** returns the account number */
         return accountNumber;
     }
-    string getClient() { /** returns a pointer to the client that owns the account */
+    string getClient() const{ /** returns a pointer to the client that owns the account */
         return ownerName;
     }
-    long double getBalance() { /** returns the account balance */
+    long double getBalance() const{ /** returns the account balance */
         return balance;
     }
     Account(long double balance, string owner, string accountNumber, string accountType) // Updated accountNumber type
         : balance(balance), ownerName(owner), accountNumber(accountNumber), accountType(accountType) {}
 };
+
+void Client::printAccounts() { //COMPLETE
+    /** prints each account in the accounts list by their account number, type, and balance */
+    for (int i = 0; i < accounts.size(); i++) {
+        std::cout << "Account " << i + 1 << ": " << accounts[i].getAccountNumber() << ": " << accounts[i].getAccountType() << ": " << accounts[i].getBalance() << std::endl;
+    }
+    return;
+}
 
 class Bank { ///< class for the institution itself operating the software
     const string name;
@@ -205,18 +196,17 @@ class Bank { ///< class for the institution itself operating the software
         string line;
         while (getline(accountStream, line)) {
             stringstream ss(line);
-            string accountType;
-            getline(ss, accountType, ','); // Read account type until the first comma
-            string accountNumber;
-            getline(ss, accountNumber, ','); // Read account number until the next comma
             string balanceStr;
-            getline(ss, balanceStr, ','); // Read balance until the next comma
+            getline(ss, balanceStr, ','); // Read balance until the first comma
             long double balance = std::stold(balanceStr); // Convert balance to long double
             string clientName;
-            getline(ss, clientName, ','); // Read client name until the next comma
-            Client client = getClient(clientName); // Get the client object using the name
-            client.addAccount(Account(balance, &client, accountNumber, accountType)); // Add the account to the vector // Add the account to the client's list of accounts
-            accountsBank.push_back(Account(balance, &client, accountNumber, accountType)); // Add the account to the bank's list of accounts
+            getline(ss, clientName, ','); // Read client name (owner name) until the next comma
+            string accountNumber;
+            getline(ss, accountNumber, ','); // Read account number until the next comma
+            string accountType;
+            getline(ss, accountType, ','); // Read account type until th next comma
+            getClient(clientName).addAccount(Account(balance, clientName, accountNumber, accountType)); // Add the account to the client's list of accounts
+            accountsBank.push_back(Account(balance, clientName, accountNumber, accountType)); // Add the account to the bank's list of accounts
             accountCount++;
         }
         std::cout << "Loaded " << accountCount << " accounts from file" << std::endl;
@@ -304,17 +294,15 @@ public:
         users.push_back(User(username, password, isAdmin));
         return;
     }
-    Client getClient(string clientName) { ///< function getClient(string clientName) searches vector clients for a client with the matching name and returns it
+    Client &getClient(string clientName) { ///< function getClient(string clientName) searches vector clients for a client with the matching name and returns it
         for(int i = 0; i < clients.size(); i++) {
             if(clients[i].getName() == clientName) {
                 return clients[i];
             }
         }
         std::cout << "Error: Client not found" << std::endl;
-        return Client("", "", "", "");
-
     };
-    User getUser(string username) {    ///COMPLETE
+    User &getUser(string username) {    ///COMPLETE
         ///< function getUser(string username) searches vector users for a user with the matching username and returns it
         for(int i = 0; i < users.size(); i++) {
             if(users[i].username == username) {
@@ -322,7 +310,6 @@ public:
             }
         }
         std::cout << "Error: User not found" << std::endl;
-        return User("", "", false);
     }
     #ifdef DEBUG 
     static void staticFunction() {
@@ -332,13 +319,13 @@ public:
     #endif
     Bank(string nameInput, int routingNumberInput) : name(nameInput), routingNumber(routingNumberInput) {
         loadUsers(); ///< loads users from a file
-        loadAccounts(); ///< loads accounts from a file
         loadClients(); ///< loads clients from a file
+        loadAccounts(); ///< loads accounts from a file
 
         #ifdef DEBUG ///< code to run when DEBUG is defined
-        printUsers();
-        printClients();
-        printAccountsBank();
+        //printUsers();
+        //printClients();
+        //printAccountsBank();
         getClient("Charles Brammell").printAccounts(); ///< test the getClient function
         // a simple snippet to test the getter for the client class
 

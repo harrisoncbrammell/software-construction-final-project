@@ -7,8 +7,7 @@
 150.25,Noah Kim,4008878,personal checking
 10100.50,Noah Kim,9001212,business savings
 3105.90,Olivia Davis,5003434,personal checking
-15234.00,Ava Wilson,6007654,investment
 765.33,Mason Garcia,7009900,personal checking
 12345.67,Mason Garcia,7009901,personal savings
-450.00,Lucas Johnson,1102468,personal checking
+450.00,Charles Brammell,1102468,personal checking
 19876.21,Benjamin Jones,1201357,business checking
