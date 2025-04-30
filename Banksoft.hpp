@@ -87,6 +87,7 @@ public:
         return adminStatus;
     }
     User(string usernameIn, string passwordIn, bool isAdminIn) : username(usernameIn), password(passwordIn), adminStatus(isAdminIn) {} ///< constructor for use by admin and teller classes
+    friend class Bank; ///< friend class to allow access to private members such as password
 };
 
 class Account; /** forward declaration of Account class to be used in Client class */
@@ -186,7 +187,7 @@ class Bank { ///< class for the institution itself operating the software
     std::vector<User> users;
     std::vector<Account> accountsBank; ///< vector of all accounts in the bank
 
-    void loadAccounts() { ///< this function loops throught each account in the text file then uses getClient to find its owner and adds it the owning client objects account list while also making sure to initialize each accounts client pointer
+    void loadAccounts() { //COMPLETEE ///< this function loops throught each account in the text file then uses getClient to find its owner and adds it the owning client objects account list while also making sure to initialize each accounts client pointer
         int accountCount = 0; ///< loads accounts from a file
         ifstream accountStream(ACCOUNTS_SAVEFILE);
         if (accountStream.peek() == std::ifstream::traits_type::eof()) { ///< checks if the file is empty
@@ -285,6 +286,33 @@ class Bank { ///< class for the institution itself operating the software
         }
         return;
     }
+    ///< this function saves the users to the staff.txt file
+    void saveUsers() { //COMPLETE
+        ofstream userStream(USERS_SAVEFILE);
+        for(int i = 0; i < users.size(); i++) {
+            userStream << (users[i].isAdmin() ? "admin" : "teller") << "," << users[i].username << "," << users[i].password << endl;
+        }
+        userStream.close();
+        return;
+    }
+    ///< this function saves the clients to the client-info.txt file
+    void saveClients() { //COMPLETE
+        ofstream clientStream(CLIENTS_SAVEFILE);
+        for(int i = 0; i < clients.size(); i++) {
+            clientStream << clients[i].getName() << "," << clients[i].getAddress() << "," << clients[i].getSSN() << "," << clients[i].getEmployer() << endl;
+        }
+        clientStream.close();
+        return;
+    }
+    ///< this function saves the accounts to the account-info.txt file
+    void saveAccounts() { //COMPLETE
+        ofstream accountStream(ACCOUNTS_SAVEFILE);
+        for(int i = 0; i < accountsBank.size(); i++) {
+            accountStream << accountsBank[i].getBalance() << "," << accountsBank[i].getClient() << "," << accountsBank[i].getAccountNumber() << "," << accountsBank[i].getAccountType() << endl;
+        }
+        accountStream.close();
+        return;
+    }
 public:
     void addClient(const Client& client){ ///<adds a client to the system
         clients.push_back(client);
@@ -294,6 +322,12 @@ public:
         users.push_back(User(username, password, isAdmin));
         return;
     }
+    string getName() { ///< returns the name of the bank
+        return name;
+    }
+    int getRoutingNumber() { ///< returns the routing number of the bank
+        return routingNumber;
+    }
     Client &getClient(string clientName) { ///< function getClient(string clientName) searches vector clients for a client with the matching name and returns it
         for(int i = 0; i < clients.size(); i++) {
             if(clients[i].getName() == clientName) {
@@ -302,7 +336,7 @@ public:
         }
         std::cout << "Error: Client not found" << std::endl;
     };
-    User &getUser(string username) {    ///COMPLETE
+    User getUser(string username) {    ///COMPLETE
         ///< function getUser(string username) searches vector users for a user with the matching username and returns it
         for(int i = 0; i < users.size(); i++) {
             if(users[i].username == username) {
@@ -310,6 +344,8 @@ public:
             }
         }
         std::cout << "Error: User not found" << std::endl;
+        ///< return a user object with empty username
+        return User("", "", false); ///< Return a default User object if not found
     }
     #ifdef DEBUG 
     static void staticFunction() {
@@ -326,11 +362,15 @@ public:
         //printUsers();
         //printClients();
         //printAccountsBank();
-        getClient("Charles Brammell").printAccounts(); ///< test the getClient function
-        // a simple snippet to test the getter for the client class
-
-        std::cout << "Client 1: " << clients[0].getName() << ": " << clients[0].getAddress() << ": " << clients[0].getSSN() << ": " << clients[0].getEmployer() << std::endl;
         #endif
+        return;
+    }
+    ///< Destructor
+    ~Bank() {
+        saveUsers(); ///< saves users to a file
+        saveClients(); ///< saves clients to a file
+        saveAccounts(); ///< saves accounts to a file
+        std::cout << "Data Successfully Saved" << std::endl;
         return;
     }
 };
