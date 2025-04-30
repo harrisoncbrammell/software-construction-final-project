@@ -5,7 +5,7 @@ chb0055@auburn.edu
 Final Project: Bank Teller System
 */
 
-#ifdef BANKSOFT_HPP
+#ifndef BANKSOFT_HPP
 #define BANKSOFT_HPP
 // Banksoft.hpp
 // This is a header file for a banking system software project.
@@ -16,6 +16,13 @@ Final Project: Bank Teller System
 #include <vector>
 #include <iostream>
 using namespace std;
+
+namespace banksoft {
+
+inline void namespaceFunction() {
+    std::cout << "This is a namespace function" << std::endl;
+    return;
+}
 
 class User { // base class for all user accounts on system, inhereited by admin and teller classes
     const string username;
@@ -125,8 +132,14 @@ public:
     void addUser(); //adds a user to the system
     Client getClient(); //searches list of clients for a client with the given ssn and returns it
     User getUser(); //searches list of users for a user with the given username and returns it
+    static void staticFunction() {
+        std::cout << "This is a static function" << std::endl;
+        return;
+    }
     Bank(string nameInput, int routingNumberInput) : name(nameInput), routingNumber(routingNumberInput) {}
 };
+
+}
 
 #endif // BANKSOFT_HPP
 // End of Banksoft.hpp
