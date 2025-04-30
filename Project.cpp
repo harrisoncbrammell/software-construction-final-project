@@ -128,8 +128,10 @@ public:
 */
 
 int main(){
+    #ifdef DEBUG
     Bank::staticFunction(); // Call the static function from the Bank class
     namespaceFunction();
+    #endif
     std::cout << "Welcome to the Bank Teller System!" << std::endl;
     std::string name;
     std::cout << "Enter your name: ";

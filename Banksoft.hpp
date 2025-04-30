@@ -18,40 +18,45 @@ Final Project: Bank Teller System
 using namespace std;
 
 namespace banksoft {
-
-inline void namespaceFunction() {
+#ifdef DEBUG
+inline void namespaceFunction() { /**tester function for debugging issues with scope*/
     std::cout << "This is a namespace function" << std::endl;
     return;
 }
+#endif
 
-class User { // base class for all user accounts on system, inhereited by admin and teller classes
+class User { 
+    /** base class for all user accounts on system, inhereited by admin and teller classes */
     const string username;
-    string password; //password is not const so it can be changed
+    string password; /** password is not const so it can be changed */
 public:
-    bool authenticate(string pwInput) {
+    bool authenticate(string pwInput) { 
+        /** takes and string as input and compares it to the users password to authenticate */
         if(pwInput == password) {
             return true;
         } else {
             return false;
         }
     }
-    void changePassword(string newPassword) {
+    void changePassword(string newPassword) { 
+        /** changes the password of the user */
+        /** takes a string as input and sets the password to the new password */
         password = newPassword;
         return;
     }
-    virtual bool isAdmin(); //virtual function to be overridden by derived classes
+    virtual bool isAdmin(); /**virtual function to be overridden by derived classes returns true if user is admin */
     User(string username, string password) : username(username), password(password) {}
 };
 
-class Admin : public User { // derived class for admin accounts
+class Admin : public User { /** derived class for admin accounts*/
 public:
-    bool isAdmin() {
+    bool isAdmin() { /** returns true if the user is an admin */
         return true;
     }
     Admin(string username, string password) : User(username, password) {}
 };
 
-class Teller : public User {  //derived class for teller accounts
+class Teller : public User {  /**derived class for teller accounts*/
 public:
     bool isAdmin() {
         return false;
@@ -59,7 +64,7 @@ public:
     Teller(string username, string password) : User(username, password) {}
 };
 
-class Account; // forward declaration of Account class to be used in Client class
+class Account; /** forward declaration of Account class to be used in Client class */
 
 class Client {
     const string name;
@@ -81,23 +86,23 @@ public:
         return employer;
     }
     void addAccount() {
-        //implement function to add account to client account list
+        // TODO: implement function to add account to client account list
         return;
     }
     Client(string name, string address, int ssn, string employer) : name(name), address(address), ssn(ssn), employer(employer) {}
 };
 
-class Account { // class for all open bank accounts, give the constructor a reference to the client object that owns it
+class Account { /** class for all open bank accounts, give the constructor a reference to the client object that owns it */
     int balance = 0;
-    const Client* clientPtr;
+    Client* const clientPtr;
     const int accountNumber;
     const string accountType;
 public:
-    void deposit(int amount) {
+    void deposit(int amount) { /** deposits money into the account */
         balance += amount;
         return;
     }
-    void withdraw(int amount) {
+    void withdraw(int amount) { /** takes and withdraws it from the account balance */
         if(amount > balance) {
             std::cout << "Error :Insufficient funds" << std::endl;
         } else if(amount < 0) {
@@ -107,31 +112,31 @@ public:
         }
         return;
     }
-    string getAccountType() {
+    string getAccountType() { /** returns the account type */
         return accountType;
     }
-    int getAccountNumber() {
+    int getAccountNumber() { /** returns the account number */
         return accountNumber;
     }
-    const Client* getClient() {
+    Client* getClient() { /** returns a pointer to the client that owns the account */
         return clientPtr;
     }
-    int getBalance() {
+    int getBalance() { /** returns the account balance */
         return balance;
     }
     Account(int balance, Client* owner, int accountNumber, string accountType) : balance(balance), clientPtr(owner), accountNumber(accountNumber), accountType(accountType) {}
 };
 
-class Bank {
+class Bank { ///< class for the institution itself operating the software
     const string name;
     const int routingNumber;
     std::vector<Client> clients;
     std::vector<User> users;
 public:
-    void addClient(); //adds a client to the system
-    void addUser(); //adds a user to the system
-    Client getClient(); //searches list of clients for a client with the given ssn and returns it
-    User getUser(); //searches list of users for a user with the given username and returns it
+    void addClient(); ///<adds a client to the system
+    void addUser(); ///<adds a user to the system
+    Client getClient(); ///<searches list of clients for a client with the given ssn and returns it
+    User getUser(); ///<searches list of users for a user with the given username and returns it
     static void staticFunction() {
         std::cout << "This is a static function" << std::endl;
         return;
