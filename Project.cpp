@@ -138,6 +138,9 @@ int main(){
     std::cin >> name;
     std::cout << "Hello, " << name << "! How can I assist you today?" << std::endl;
 
+    Bank b("harrison bank",123123124124);
+     //Create a new Bank object
+
     return 0;
 }
 
