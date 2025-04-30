@@ -54,7 +54,7 @@ string getPassword() { //COMPLETE
 }
 #endif
 
-
+class Bank;
 
 class User { //COMPLETE
     /** base class for all user accounts on system, inhereited by admin and teller classes */
@@ -315,7 +315,7 @@ public:
 
     void deleteUser(string username) { //COMPLETE
         ///< checks is user exhists in the system and returns if not found does nothing if found
-        if(this->getUser(username).username == "") {
+        if(this->getUser(username)->username == "") {
             std::cout << "Error: User not found" << std::endl;
             return;
         }
@@ -341,7 +341,7 @@ public:
     } 
     void addUser(string username, string password, bool isAdmin) { ///<adds a user to the system
         ///< checks if the user already exists in the system
-        if(this->getUser(username).username != "") {
+        if(this->getUser(username)->username != "") {
             std::cout << "Error: User already exists" << std::endl;
             return;
         }
@@ -364,16 +364,17 @@ public:
         std::cout << "Error: Client not found" << std::endl;
         return Client("", "", "", ""); ///< Return a default Client object if not found
     };
-    User getUser(string username) {    ///COMPLETE
+    User *getUser(string username) {    ///COMPLETE
         ///< function getUser(string username) searches vector users for a user with the matching username and returns it
         for(int i = 0; i < users.size(); i++) {
             if(users[i].username == username) {
-                return users[i];
+                return &users[i];
             }
         }
         std::cout << "Error: User not found" << std::endl;
         ///< return a user object with empty username
-        return User("", "", false); ///< Return a default User object if not found
+        //return a pointer to a user object with empty username
+        User *emptyUser = new User("", "", false); // Create a new User object with empty username
     }
     #ifdef DEBUG 
     static void staticFunction() {

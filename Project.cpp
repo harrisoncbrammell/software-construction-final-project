@@ -15,7 +15,7 @@ using namespace std;
 
 ///< menu handling login functionality
 /// @param b 
-User loginMenu(Bank* b) {
+User* loginMenu(Bank* b) {
     char choice;
     std::cout << "=========== Welcome to the " << b->getName() << "! ===========" << std::endl;
     std::cout << "1) Login" << std::endl << "2) Quit" << std::endl << "Please choose an option: ";
@@ -29,14 +29,14 @@ User loginMenu(Bank* b) {
             std::cout << "Enter password: ";
             password = getPassword();
             // Check if the user is an admin or teller
-           User user = b->getUser(username); // Get the user object from the bank
-            if (user.username == "") {
+            User* user = b->getUser(username); // Get the user object from the bank
+            if (user->username == "") {
                 system("clear");
                 std::cout << "Invalid username." << std::endl;
                 loginMenu(b); // Recursively call the menu function to allow retry
             }
-            if(user.authenticate(password)) {
-                if (user.isAdmin()) {
+            if(user->authenticate(password)) {
+                if (user->isAdmin()) {
                     // Admin login
                     std::cout << "Welcome, Admin!" << std::endl;
                     return user;
@@ -64,7 +64,7 @@ User loginMenu(Bank* b) {
     }
 }
 
-void adminMenu(Bank* b, User &u) {
+void adminMenu(Bank* b, User* u) {
     std::cout << "Teller Terminal System System Administration" << std::endl << "==================================" << std::endl;
     std::cout << "1) Client and Account Managment" << std::endl << "2) Add a brach staff member" << std::endl << "3) Delete a branch staff member" << std::endl << "4) Display branch staff" << std::endl << "5) Change Password" << std::endl << "6) Exit" << std::endl << "Please choose an option: " << std::endl;
     char choice;
@@ -107,7 +107,7 @@ void adminMenu(Bank* b, User &u) {
         }
         case '5':{
             system("clear");
-            u.changePassword(); // Call the change password function
+            u->changePassword(); // Call the change password function
             b->saveUsers(); // Save the users to the file
             break;
         }
@@ -135,9 +135,9 @@ int main(){
     ///< create the bank object on the heap
     Bank* b = new Bank(bankName, bankRoutingNumber);
     ///< initial menu
-    User u = loginMenu(b);
+    User* u = loginMenu(b);
     system("clear");
-    if (u.isAdmin()) {
+    if (u->isAdmin()) {
         adminMenu(b, u);
     } else {
         std::cout << "You have teller privileges." << std::endl;
