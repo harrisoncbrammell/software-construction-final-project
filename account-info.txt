@@ -11,3 +11,5 @@
 12345.7,Mason Garcia,7009901,personal savings
 450,Charles Brammell,1102468,personal checking
 19876.2,Benjamin Jones,1201357,business checking
+0,Charles Brammell,243252,personal
+4.56,Charles Brammell,235456,personal

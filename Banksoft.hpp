@@ -86,52 +86,7 @@ public:
     User(string usernameIn, string passwordIn, bool isAdminIn) : username(usernameIn), password(passwordIn), adminStatus(isAdminIn) {} ///< constructor for use by admin and teller classes
     friend class Bank; ///< friend class to allow access to private members such as password
 };
-
-class Account; /** forward declaration of Account class to be used in Client class */
-
-class Client {
-    const string name;
-    string address;
-    const string ssn; // Changed from int to string
-    string employer;
-    std::vector<Account> accounts;
-public:
-    void printAccounts(); ///< prints each account in the accounts list by their account number, type, and balance
-    void addAccount(const Account& newAcct) { //COMPLETE
-        accounts.push_back(newAcct); ///< adds an account to the clients account list
-        return;
-    }
-
-    void setAddress(string newAddress) { //COMPLETE
-        /** sets the address of the client */
-        address = newAddress;
-        return;
-    }
-    void setEmployer(string newEmployer) { //COMPLETE
-        /** sets the employer of the client */
-        employer = newEmployer;
-        return;
-    }
-    string getName() const{
-        return name;
-    }
-    string getAddress() const {
-        return address;
-    }
-    const string getSSN() const { // Updated return type to string
-        return ssn;
-    }
-    string getEmployer() const {
-        return employer;
-    }
-    void addAccount() {
-        // TODO: implement function to add account to client account list
-        return;
-    }
-    Client(string name, string address, string ssn, string employer) // Updated ssn type
-        : name(name), address(address), ssn(ssn), employer(employer) {}
-};
-
+///> forward declaration of User class to be used in Bank class
 class Account { /** class for all open bank accounts, give the constructor a reference to the client object that owns it */
     long double balance = 0.0; // Changed from int to long double
     const string ownerName;
@@ -152,21 +107,68 @@ public:
         }
         return;
     }
-    string getAccountType() const{ /** returns the account type */
+    string getAccountType() const { /** returns the account type */
         return accountType;
     }
-    string getAccountNumber() const{ /** returns the account number */
+    string getAccountNumber() const { /** returns the account number */
         return accountNumber;
     }
-    string getClient() const{ /** returns a pointer to the client that owns the account */
+    string getClient() const { /** returns a pointer to the client that owns the account */
         return ownerName;
     }
-    long double getBalance() const{ /** returns the account balance */
+    long double getBalance() const { /** returns the account balance */
         return balance;
     }
     Account(long double balance, string owner, string accountNumber, string accountType) // Updated accountNumber type
         : balance(balance), ownerName(owner), accountNumber(accountNumber), accountType(accountType) {}
+}; 
+
+class Client {
+    const string name;
+    string address;
+    string ssn; // Changed from int to string
+    string employer;
+    std::vector<Account> accounts;
+public:
+    void printAccounts(); ///< prints each account in the accounts list by their account number, type, and balance
+
+    void setAddress(string newAddress) { //COMPLETE
+        /** sets the address of the client */
+        address = newAddress;
+        return;
+    }
+    void setEmployer(string newEmployer) { //COMPLETE
+        /** sets the employer of the client */
+        employer = newEmployer;
+        return;
+    }
+    string getName() const{
+        return name;
+    }
+    string getAddress() const {
+        return address;
+    }
+    const string getSSN() const { // Updated return type to string
+        return ssn;
+    }
+    void setSSN(string newSSN) { //COMPLETE
+        /** sets the ssn of the client */
+        ssn = newSSN;
+        return;
+    }
+    string getEmployer() const {
+        return employer;
+    }
+    void addAccount(long double balance, string owner, string accountNumber, string accountType) { //COMPLETE
+        // TODO: implement function to add account to client account list
+        accounts.push_back(Account(balance, owner, accountNumber, accountType)); ///< adds an account to the clients account list
+        return;
+    }
+    Client(string name, string address, string ssn, string employer) // Updated ssn type
+        : name(name), address(address), ssn(ssn), employer(employer) {}
 };
+
+
 
 void Client::printAccounts() { //COMPLETE
     /** prints each account in the accounts list by their account number, type, and balance */
@@ -180,9 +182,8 @@ class Bank { ///< class for the institution itself operating the software
     const string name;
     const int routingNumber;
     std::vector<User> users;
-    std::vector<Account> accountsBank;
-    std::vector<Client> clients; ///< vector of all accounts in the bank
-
+    std::vector<Client> clients;
+    std::vector<Account> accountsBank; ///< vector of all accounts in the bank
     void loadAccounts() { //COMPLETEE ///< this function loops throught each account in the text file then uses getClient to find its owner and adds it the owning client objects account list while also making sure to initialize each accounts client pointer
         int accountCount = 0; ///< loads accounts from a file
         ifstream accountStream(ACCOUNTS_SAVEFILE);
@@ -202,7 +203,7 @@ class Bank { ///< class for the institution itself operating the software
             getline(ss, accountNumber, ','); // Read account number until the next comma
             string accountType;
             getline(ss, accountType, ','); // Read account type until th next comma
-            getClient(clientName).addAccount(Account(balance, clientName, accountNumber, accountType)); // Add the account to the client's list of accounts
+            getClient(clientName)->addAccount(balance, clientName, accountNumber, accountType); // Add the account to the client's list of accounts
             accountsBank.push_back(Account(balance, clientName, accountNumber, accountType)); // Add the account to the bank's list of accounts
             accountCount++;
         }
@@ -312,6 +313,12 @@ public:
         return;
     }
 
+    void addAccountBank(long double balance, string owner, string accountNumber, string accountType) { //COMPLETE
+        /** adds an account to the bank */
+        accountsBank.push_back(Account(balance, owner, accountNumber, accountType));
+        saveAccounts(); ///< saves the accounts to the file
+        return;
+    }
 
     void deleteUser(string username) { //COMPLETE
         ///< checks is user exhists in the system and returns if not found does nothing if found
@@ -337,6 +344,7 @@ public:
     }
     void addClient(const Client& client){ ///<adds a client to the system
         clients.push_back(client);
+        saveClients(); ///< saves the clients to the file
         return;
     } 
     void addUser(string username, string password, bool isAdmin) { ///<adds a user to the system
@@ -359,14 +367,17 @@ public:
     int getRoutingNumber() const { ///< returns the routing number of the bank
         return routingNumber;
     }
-    Client getClient(string clientName) { ///< function getClient(string clientName) searches vector clients for a client with the matching name and returns it
+    Client *getClient(string clientName) { ///< function getClient(string clientName) searches vector clients for a client with the matching name and returns it
         for(int i = 0; i < clients.size(); i++) {
             if(clients[i].getName() == clientName) {
-                return clients[i];
+                return &clients[i];
             }
         }
         std::cout << "Error: Client not found" << std::endl;
-        return Client("", "", "", ""); ///< Return a default Client object if not found
+        ///< return a pointer to the client object
+        //return a client object with empty name
+        //Client *emptyClient = new Client("", "", "", ""); // Create a new Client object with empty name
+        return nullptr; // Return the empty client object
     };
     User *getUser(string username) {    ///COMPLETE
         ///< function getUser(string username) searches vector users for a user with the matching username and returns it
