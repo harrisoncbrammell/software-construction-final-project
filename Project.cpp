@@ -1,8 +1,10 @@
 /*
+Project.cpp
 Charles Harrison Brammell
 COMP 2710: Software Construction - Spring 2025
 chb0055@auburn.edu
 Final Project: Bank Teller System
+Outside Sources: cplusplus.com and stackoverflow.com for string parsing help and getPassword() function with asterisk masking using termios.
 */
 #include "Banksoft.hpp"
 #include <string>

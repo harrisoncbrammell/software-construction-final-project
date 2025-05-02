@@ -1,9 +1,10 @@
 /*
+Banksoft.hpp
 Charles Harrison Brammell
 COMP 2710: Software Construction - Spring 2025
 chb0055@auburn.edu
 Final Project: Bank Teller System
-Outside Sources: cplusplus.com for getpass() function stackoverflow.com for string parsing
+Outside Sources: cplusplus.com and stackoverflow.com for string parsing help and getPassword() function with asterisk masking using termios.
 */
 
 #ifndef BANKSOFT_HPP
@@ -429,7 +430,7 @@ public:
             clientStream << clients[i].getName() << "," 
                          << clients[i].getAddress() << "," 
                          << clients[i].getSSN() << "," 
-                         << clients[i].getEmployer() << ","
+                         << clients[i].getEmployer() << "," 
                          << clients[i].getAnnualIncome() << endl; // Save annual income
         }
         clientStream.close();
@@ -439,8 +440,8 @@ public:
         ofstream accountStream("account-info.txt");
         for (const auto& account : accountsBank) {
             // Write in the order: balance, owner, type, number to match the file format
-            accountStream << account.getBalance() << ","
-                          << account.getClientName() << ","
+            accountStream << account.getBalance() << "," 
+                          << account.getClientName() << "," 
                           << account.getAccountType() << "," // Write type 3rd
                           << account.getAccountNumber() << std::endl; // Write number 4th
         }
