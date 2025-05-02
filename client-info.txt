@@ -1,17 +1,20 @@
-Charles Brammell,5981 l,2294024030,auburn
-Eleanor Vance,123 Oak Avenue,5551234567,Global Solutions Ltd
-Marcus Chen,456 Pine Street,5559876543,Innovatech Dynamics
-Sophia Rossi,789 Maple Drive,5552345678,Apex Industries
-Liam Gallagher,101 Elm Court,5558765432,Quantum Consulting
-Isabella Nguyen,212 Birch Lane,5553456789,Starlight Enterprises
-Noah Kim,345 Cedar Road,5557654321,Blue Sky Ventures
-Olivia Davis,567 Willow Way,5554567890,Horizon Group
-Ethan Miller,789 Spruce Circle,5556543210,Precision Systems
-Mason Garcia,112 Aspen Trail,5554321098,NextGen Corp
-Chloe Rodriguez,334 Poplar Place,5556789012,Summit Resources
-Logan Smith,556 Fir Terrace,5553210987,Meridian Tech
-Harper Brown,778 Magnolia St,5557890123,Capstone Inc
-Lucas Johnson,990 Hemlock Pass,5552109876,Frontier Co
-Mia Williams,246 Cypress Bend,5558901234,Pinnacle Strategies
-Benjamin Jones,468 Juniper Hill,5551098765,Keystone Solutions
-
+Charles Brammell,123 Oak St,111-22-333,Tech Corp,85000
+Eleanor Vance,456 Pine Ave,222-33-444,City Hospital,62000
+Marcus Chen,789 Maple Dr,333-44-555,State University,71000
+Sophia Rossi,101 Birch Ln,444-55-666,Art Studio,55000
+Liam Gallagher,202 Cedar Rd,555-66-777,Music Store,48000
+Noah Kim,303 Elm St,666-77-888,Research Lab,92000
+Olivia Davis,404 Spruce Ave,777-88-999,Marketing Firm,78000
+Ethan Miller,505 Willow Dr,888-99-000,Construction Co,65000
+Mason Garcia,606 Aspen Ct,999-00-111,Finance Group,110000
+Chloe Rodriguez,707 Redwood Pl,101-11-212,Retail Chain,52000
+Logan Smith,808 Sequoia Way,121-31-414,Logistics Inc,70000
+Harper Brown,909 Fir Cir,131-41-515,Law Office,95000
+Lucas Johnson,110 Sycamore Bv,141-51-616,Engineering Firm,88000
+Mia Williams,120 Magnolia St,151-61-717,Design Agency,60000
+Benjamin Jones,130 Poplar Ave,161-71-818,Consulting LLC,120000
+Ava Patel,140 Juniper Dr,171-81-919,Pharmacy,75000
+James Lee,150 Hemlock Ln,181-91-020,Restaurant Group,58000
+Isabella Wong,160 Cypress Rd,191-02-121,Software Solutions,105000
+,,,,
+,,,,

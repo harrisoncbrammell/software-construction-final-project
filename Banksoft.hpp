@@ -8,6 +8,7 @@ Outside Sources: cplusplus.com for getpass() function stackoverflow.com for stri
 
 #ifndef BANKSOFT_HPP
 #define BANKSOFT_HPP
+
 // Banksoft.hpp
 // This is a header file for a banking system software project.
 // It contains class definitions for User, Admin, Teller, Client, Account, and Bank.
@@ -17,11 +18,12 @@ Outside Sources: cplusplus.com for getpass() function stackoverflow.com for stri
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <cctype> // for isspace
+#include <cctype>
 #include <limits>
 #include <iostream>
-#include <termios.h> // for termios, tcgetattr, tcsetattr
-#include <unistd.h>  // for STDIN_FILENO
+#include <termios.h>
+#include <unistd.h>
+
 using namespace std;
 
 namespace banksoft {
@@ -38,12 +40,14 @@ const string ACCOUNTS_SAVEFILE = "account-info.txt"; ///< savefile for accounts
 
 ///< namespace scope functions
 #ifdef HIDE_PASSWORD
-tring getPassword() { //gets password 
+string getPassword() { //gets password 
     string input = getpass("Enter password: ");
     std::cout << std::endl;
     ///< check if the input is empty and recursivley call the function if so
     if(input.empty()) {
+        #ifdef LOUD
         system("clear");
+        #endif
         return getPassword();
     }
     return input;
@@ -57,7 +61,9 @@ string getPassword() { //gets password
     std::cout << std::endl;
     ///< check if the input is empty and recursivley call the function if so
     if(input.empty()) {
+        #ifdef LOUD
         system("clear");
+        #endif
         return getPassword();
     }
     return input;
@@ -73,12 +79,10 @@ class User { //COMPLETE
 public:
     string username;
     bool authenticate(string pwInput) const {
-        return pwInput == password;
+        return pwInput == this->password; // Explicitly use 'this->' for clarity
     }
     void changePassword() { // COMPLETE
-        cout << "Press enter to continue..." << endl;
         while (true) {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
             string newPassword = getPassword(); // Prompt for the new password
             if (newPassword == password) {
                 std::cout << "Error: Your new password must be different from the old one!" << std::endl;
@@ -139,6 +143,7 @@ class Client {
     string address;
     string ssn; // Changed from int to string
     string employer;
+    string annualIncome; // New parameter
     std::vector<Account> accounts;
 public:
     void printAccounts(); ///< prints each account in the accounts list by their account number, type, and balance
@@ -152,6 +157,12 @@ public:
         /** sets the employer of the client */
         employer = newEmployer;
         return;
+    }
+    void setAnnualIncome(string newIncome) { // Setter for annual income
+        annualIncome = newIncome;
+    }
+    string getAnnualIncome() const { // Getter for annual income
+        return annualIncome;
     }
     string getName() const{
         return name;
@@ -186,8 +197,8 @@ public:
         Account *emptyAccount = new Account(0.0, "", "", ""); // Create a new Account object with empty account number
         return emptyAccount; // Return the empty account object
     }
-    Client(string name, string address, string ssn, string employer) // Updated ssn type
-        : name(name), address(address), ssn(ssn), employer(employer) {}
+    Client(string name, string address, string ssn, string employer, string income) // Updated constructor
+        : name(name), address(address), ssn(ssn), employer(employer), annualIncome(income) {}
 };
 
 
@@ -208,19 +219,70 @@ class Bank { ///< class for the institution itself operating the software
     std::vector<Client> clients;
     std::vector<Account> accountsBank; ///< vector of all accounts in the bank
     void loadAccounts() {
-        ifstream accountStream("account-info.txt");
+        ifstream accountStream(ACCOUNTS_SAVEFILE); // Use constant
         string line;
+        accountCount = 0; // Reset count before loading
+        accountsBank.clear(); // Clear existing accounts before loading
+
+        if (!accountStream) {
+            std::cerr << "Error: Could not open account file: " << ACCOUNTS_SAVEFILE << std::endl;
+            return;
+        }
+        if (accountStream.peek() == std::ifstream::traits_type::eof()) {
+             std::cout << "Account file is empty. No accounts loaded." << std::endl;
+             accountStream.close();
+             return;
+        }
+
+
         while (getline(accountStream, line)) {
             stringstream ss(line);
             long double balance;
-            string ownerName, accountNumber, accountType;
+            string ownerName, accountNumber, accountType, balanceStr;
 
-            ss >> balance;
-            getline(ss, ownerName, ',');
-            getline(ss, accountNumber, ',');
-            getline(ss, accountType, ',');
-            accountCount++;
+            // Read balance as string first to handle potential formatting issues
+            if (!getline(ss, balanceStr, ',')) continue; // Skip malformed lines
+            try {
+                balance = stold(balanceStr); // Convert string to long double
+            } catch (const std::invalid_argument& ia) {
+                std::cerr << "Warning: Invalid balance format skipped: " << balanceStr << " in line: " << line << std::endl;
+                continue;
+            } catch (const std::out_of_range& oor) {
+                 std::cerr << "Warning: Balance out of range skipped: " << balanceStr << " in line: " << line << std::endl;
+                 continue;
+            }
+
+
+            if (!getline(ss, ownerName, ',')) continue; // Skip malformed lines
+            // Read accountType (3rd field)
+            if (!getline(ss, accountType, ',')) continue; // Skip malformed lines
+            // Read accountNumber (4th field)
+            if (!getline(ss, accountNumber)) continue; // Read rest of line as account number
+
+            // Remove potential trailing '\r' from accountNumber
+             if (!accountNumber.empty() && accountNumber.back() == '\r') {
+                 accountNumber.pop_back();
+             }
+
+
+            // Add account to the bank's central list (constructor order: balance, owner, number, type)
             accountsBank.emplace_back(balance, ownerName, accountNumber, accountType);
+            accountCount++;
+
+            // Find the client and add the account to their list (addAccount order: balance, owner, number, type)
+            bool clientFound = false;
+            for (Client& client : clients) { // Iterate by reference to modify
+                if (client.getName() == ownerName) {
+                    client.addAccount(balance, ownerName, accountNumber, accountType);
+                    clientFound = true;
+                    break; // Found the client, no need to check further
+                }
+            }
+             #ifdef DEBUG // Optional: Warn if an account's owner isn't found
+             if (!clientFound) {
+                 std::cerr << "Warning: Client '" << ownerName << "' not found for account " << accountNumber << std::endl;
+             }
+             #endif
         }
         std::cout << "Loaded " << accountCount << " accounts from file" << std::endl;
         accountStream.close();
@@ -251,7 +313,9 @@ class Bank { ///< class for the institution itself operating the software
             getline(ss, ssn, ','); // Read SSN as a string
             string employer;
             getline(ss, employer, ','); // Read employer until the next comma
-            clients.push_back(Client(name, address, ssn, employer));
+            string income;
+            getline(ss, income, ','); // Read annual income until the next comma
+            clients.push_back(Client(name, address, ssn, employer, income));
             clientCount++;
         }
         std::cout << "Loaded " << clientCount << " clients from file" << std::endl;
@@ -279,6 +343,10 @@ class Bank { ///< class for the institution itself operating the software
             getline(ss, username, ',');
             string password; 
             getline(ss, password, ',');
+            // Remove trailing '\r' if present (handles Windows line endings)
+            if (!password.empty() && password.back() == '\r') {
+                password.pop_back();
+            }
             if(accountType == "admin"){
                 users.push_back(User(username, password, true));
                 userCount++;
@@ -328,7 +396,8 @@ public:
             clientStream << clients[i].getName() << "," 
                          << clients[i].getAddress() << "," 
                          << clients[i].getSSN() << "," 
-                         << clients[i].getEmployer() << endl;
+                         << clients[i].getEmployer() << ","
+                         << clients[i].getAnnualIncome() << endl; // Save annual income
         }
         clientStream.close();
     }
@@ -336,10 +405,11 @@ public:
     void saveAccounts() {
         ofstream accountStream("account-info.txt");
         for (const auto& account : accountsBank) {
+            // Write in the order: balance, owner, type, number to match the file format
             accountStream << account.getBalance() << ","
                           << account.getClientName() << ","
-                          << account.getAccountNumber() << ","
-                          << account.getAccountType() << std::endl;
+                          << account.getAccountType() << "," // Write type 3rd
+                          << account.getAccountNumber() << std::endl; // Write number 4th
         }
         accountStream.close();
     }
@@ -405,7 +475,7 @@ public:
             }
         }
         std::cout << "Error: Client not found" << std::endl;
-        static Client defaultClient("", "", "", ""); // Create a default client object
+        static Client defaultClient("", "", "", "", ""); // Create a default client object
         return &defaultClient; // Return nullptr if the client is not found
     }
     User* getUser(string username) {    ///COMPLETE
@@ -431,7 +501,7 @@ public:
     Bank(string nameInput, int routingNumberInput) : name(nameInput), routingNumber(routingNumberInput) {
         loadUsers(); ///< loads users from a file
         loadClients(); ///< loads clients from a file
-        loadAccounts(); ///< loads accounts from a file
+        loadAccounts(); ///< loads accounts from a file (NOW associates accounts with clients)
 
         #ifdef DEBUG ///< code to run when DEBUG is defined
         //printUsers();

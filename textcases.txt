@@ -1,0 +1,322 @@
+Test Case 1:
+Steps:
+  1)A branch staff member logs in using their username (acm0008) and password.  
+  2)Select "Client and Account Management".  
+  3)Choose "Add a client".  
+  4)Enter the client's details: name (John Doe), address (123 Main St, Auburn, AL), social security number (987-65-4321), employer (Auburn University), and annual income (75000).  
+  5)Select "Add an account".  
+  6)Enter the account details: account number (67890), account type (Savings), and balance (1000).  
+  7)Select "Save Client and Account Information" to save the data.
+Output:
+Loaded 3 users from file
+Loaded 18 clients from file
+Loaded 16 accounts from file
+=========== Welcome to the Tiger Branch of Auburn Bank! ===========
+1) Login
+2) Quit
+Please choose an option: 1
+
+Enter username: acm0008
+
+Enter password:
+
+Welcome, Teller!
+=== Teller Terminal System Branch Staff ===
+==================================================================
+1) Client and Account Management
+2) Change password
+3) Exit
+Please choose an option: 1
+Teller Terminal System Client and Account Management
+=============================================================
+1) Add a client
+2) Add an account
+3) Edit Client Information
+4) Manage an account
+5) Save Client and Account Information
+6) Exit
+Please choose an option: 1
+Enter the name of the new client: John Doe
+
+Enter the address of the new client: 123 Main Street Auburn AL
+
+Enter the SSN of the new client: 987654321
+
+Enter the employer of the new client: Auburn University
+
+Enter the annual income of the new client: 75000
+
+Client added successfully!
+Teller Terminal System Client and Account Management
+=============================================================
+1) Add a client
+2) Add an account
+3) Edit Client Information
+4) Manage an account
+5) Save Client and Account Information
+6) Exit
+Please choose an option: 6
+Data Successfully Saved
+Exiting...
+Disccusion:
+Additionally, the data files contain accurate and expected information corresponding the above operation
+
+Test Case 2:
+  1)A system administrator logs in.  
+  2)Select "Delete a branch staff member".  
+  3)Enter the username of the staff member to be deleted (xyz0001).  
+  4)Confirm the deletion.
+Output:
+Loaded 3 users from file
+Loaded 17 clients from file
+Loaded 18 accounts from file
+=========== Welcome to the Tiger Branch of Auburn Bank! ===========
+1) Login
+2) Quit
+Please choose an option: 1
+
+Enter username: harrison
+
+Enter password:
+
+Welcome, Admin!
+Teller Terminal System System Administration
+==================================
+1) Client and Account Management
+2) Add a branch staff member
+3) Delete a branch staff member
+4) Display branch staff
+5) Change Password
+6) Exit
+Please choose an option: 4
+User 1: harrison: admin
+User 2: john: teller
+User 3: acm0008: teller
+Press Enter to continue...
+
+Teller Terminal System System Administration
+==================================
+1) Client and Account Management
+2) Add a branch staff member
+3) Delete a branch staff member
+4) Display branch staff
+5) Change Password
+6) Exit
+Please choose an option: 3
+Enter the username of the staff member to delete: acm0008
+
+Delete a user User Name: acm0008
+1) Confirm
+2) Cancel
+Please choose an option: 1
+User acm0008 deleted
+Press Enter to continue...
+
+Teller Terminal System System Administration
+==================================
+1) Client and Account Management
+2) Add a branch staff member
+3) Delete a branch staff member
+4) Display branch staff
+5) Change Password
+6) Exit
+Please choose an option: 4
+User 1: harrison: admin
+User 2: john: teller
+Press Enter to continue...
+
+Teller Terminal System System Administration
+==================================
+1) Client and Account Management
+2) Add a branch staff member
+3) Delete a branch staff member
+4) Display branch staff
+5) Change Password
+6) Exit
+Please choose an option: 6
+Data Successfully Saved
+Exiting...
+Disccusion:
+Additionally, the data files contain accurate and expected information corresponding the above operation
+
+Test Case 3:
+Steps:
+  1)A branch staff member logs in.  
+  2)Select "Change password".  
+  3)Enter the current password.  
+  4)When prompted for a new password, leave the field blank and press Enter.
+Output:
+Loaded 2 users from file
+Loaded 20 clients from file
+Loaded 17 accounts from file
+=========== Welcome to the Tiger Branch of Auburn Bank! ===========
+1) Login
+2) Quit
+Please choose an option: 1
+
+Enter username: harrison
+
+Enter password: chb12345
+
+Welcome, Admin!
+Teller Terminal System System Administration
+==================================
+1) Client and Account Management
+2) Add a branch staff member
+3) Delete a branch staff member
+4) Display branch staff
+5) Change Password
+6) Exit
+Please choose an option: 5
+Enter password: chb123
+
+Password changed successfully!
+Press Enter to continue...
+
+Teller Terminal System System Administration
+==================================
+1) Client and Account Management
+2) Add a branch staff member
+3) Delete a branch staff member
+4) Display branch staff
+5) Change Password
+6) Exit
+Please choose an option: 6
+Data Successfully Saved
+Exiting...
+user@DESKTOP-VNKTN2L:/mnt/e/Development/School/software construction/team project/software-construction-final-project$ ./main_showpw.elf
+Loaded 2 users from file
+Loaded 20 clients from file
+Loaded 17 accounts from file
+=========== Welcome to the Tiger Branch of Auburn Bank! ===========
+1) Login
+2) Quit
+Please choose an option: 1
+
+Enter username: harrison
+
+Enter password: chb12345
+
+Invalid password.
+=========== Welcome to the Tiger Branch of Auburn Bank! ===========
+1) Login
+2) Quit
+Please choose an option: 1
+
+Enter username: harrison
+
+Enter password: chb123
+
+Welcome, Admin!
+Teller Terminal System System Administration
+==================================
+1) Client and Account Management
+2) Add a branch staff member
+3) Delete a branch staff member
+4) Display branch staff
+5) Change Password
+6) Exit
+Please choose an option: 6
+Data Successfully Saved
+Exiting...
+Disccusion:
+Additionally, the data files contain accurate and expected information corresponding the above operation
+The password hiding functionality was disabled with the HIDE_PASSWORD macro for this test in order to show the password change feature in action.
+
+
+Test Case 4:
+Steps:
+  1) A branch staff member logs in.  
+  2) Select "Client and Account Management".  
+  3) Choose "Manage an account".  
+  4) Enter the account number (12345).  
+  5) Select "Withdraw".  
+  6) Enter a withdrawal amount greater than the current balance (e.g., 600 when the balance is 500).
+Output:
+Loaded 2 users from file
+Loaded 20 clients from file
+Loaded 17 accounts from file
+=========== Welcome to the Tiger Branch of Auburn Bank! ===========
+1) Login
+2) Quit
+Please choose an option: 1
+
+Enter username: john
+
+Enter password:
+
+Welcome, Teller!
+=== Teller Terminal System Branch Staff ===
+==================================================================
+1) Client and Account Management
+2) Change password
+3) Exit
+Please choose an option: 1
+Teller Terminal System Client and Account Management
+=============================================================
+1) Add a client
+2) Add an account
+3) Edit Client Information
+4) Manage an account
+5) Save Client and Account Information
+6) Exit
+Please choose an option: 4
+Enter the name of the client to manage accounts for: Charles Brammell
+
+
+Accounts for Charles Brammell:
+Account 1: 123456789: Checking: 5000
+Account 2: 987654321: Savings: 15000
+
+Enter the account number to manage: 123456789
+
+
+Manage account 123456789 for Charles Brammell
+Current Balance: 5000
+1) Deposit
+2) Withdraw
+3) Cancel
+Please choose an option: 2
+Enter the amount to withdraw: 6000
+Error: Insufficient funds.
+
+Manage account 123456789 for Charles Brammell
+Current Balance: 5000
+1) Deposit
+2) Withdraw
+3) Cancel
+Please choose an option: 1
+Enter the amount to deposit: 60.50
+Deposit successful. New balance: 5060.5
+
+Manage account 123456789 for Charles Brammell
+Current Balance: 5060.5
+1) Deposit
+2) Withdraw
+3) Cancel
+Please choose an option: 3
+Returning to account management menu...
+Teller Terminal System Client and Account Management
+=============================================================
+1) Add a client
+2) Add an account
+3) Edit Client Information
+4) Manage an account
+5) Save Client and Account Information
+6) Exit
+Please choose an option: 5
+Client and Account information saved.
+Teller Terminal System Client and Account Management
+=============================================================
+1) Add a client
+2) Add an account
+3) Edit Client Information
+4) Manage an account
+5) Save Client and Account Information
+6) Exit
+Please choose an option: 6
+Data Successfully Saved
+Exiting...
+Disccusion:
+Additionally, the data files contain accurate and expected information corresponding the above operation.
+We were also able to confirm the functionality of the deposit feature aswell in this example as shown in the above output.

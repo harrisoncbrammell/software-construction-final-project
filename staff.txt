@@ -1,3 +1,2 @@
-admin,harrison,asf
+admin,harrison,chb123
 teller,john,abc123
-teller,acm0008,passw0rd
