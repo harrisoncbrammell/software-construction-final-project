@@ -51,6 +51,7 @@ string getPassword() { //gets password
     std::cout << std::endl;
     ///< check if the input is empty and recursivley call the function if so
     if(input.empty()) {
+        system("clear");
         std::cout << "Error: Password cannot be empty" << std::endl;
         return getPassword();
     }
@@ -167,6 +168,18 @@ public:
         accounts.push_back(Account(balance, owner, accountNumber, accountType)); ///< adds an account to the clients account list
         return;
     }
+    Account* getAccount(string accountNumber) { //COMPLETE
+        /** function getAccount(string accountNumber) searches vector accounts for an account with the matching account number and returns it */
+        for(int i = 0; i < accounts.size(); i++) {
+            if(accounts[i].getAccountNumber() == accountNumber) {
+                return &accounts[i];
+            }
+        }
+        std::cout << "Error: Account not found" << std::endl;
+        ///< return a pointer to an account object with empty account number
+        Account *emptyAccount = new Account(0.0, "", "", ""); // Create a new Account object with empty account number
+        return emptyAccount; // Return the empty account object
+    }
     Client(string name, string address, string ssn, string employer) // Updated ssn type
         : name(name), address(address), ssn(ssn), employer(employer) {}
 };
@@ -280,6 +293,18 @@ class Bank { ///< class for the institution itself operating the software
         return;
     }
 public:
+    Account* getAccountBank(string accountNumber) { //COMPLETE
+        /** function getAccountBank(string accountNumber) searches vector accountsBank for an account with the matching account number and returns it */
+        for(int i = 0; i < accountsBank.size(); i++) {
+            if(accountsBank[i].getAccountNumber() == accountNumber) {
+                return &accountsBank[i];
+            }
+        }
+        std::cout << "Error: Account not found" << std::endl;
+        ///< return a pointer to an account object with empty account number
+        Account *emptyAccount = new Account(0.0, "", "", ""); // Create a new Account object with empty account number
+        return emptyAccount; // Return the empty account object
+    }
     //this function prints each user in the users list by their username, password, and account type
     void printUsers() const { //COMPLETE
         for(int i = 0; i < users.size(); i++) {
@@ -298,13 +323,15 @@ public:
         return;
     }
     ///< this function saves the clients to the client-info.txt file
-    void saveClients() { //COMPLETE
+    void saveClients() {
         ofstream clientStream(CLIENTS_SAVEFILE);
-        for(int i = 0; i < clients.size(); i++) {
-            clientStream << clients[i].getName() << "," << clients[i].getAddress() << "," << clients[i].getSSN() << "," << clients[i].getEmployer() << endl;
+        for (int i = 0; i < clients.size(); i++) {
+            clientStream << clients[i].getName() << "," 
+                         << clients[i].getAddress() << "," 
+                         << clients[i].getSSN() << "," 
+                         << clients[i].getEmployer() << endl;
         }
         clientStream.close();
-        return;
     }
     ///< this function saves the accounts to the account-info.txt file
     void saveAccounts() { //COMPLETE
@@ -370,19 +397,17 @@ public:
     int getRoutingNumber() const { ///< returns the routing number of the bank
         return routingNumber;
     }
-    Client *getClient(string clientName) { ///< function getClient(string clientName) searches vector clients for a client with the matching name and returns it
-        for(int i = 0; i < clients.size(); i++) {
-            if(clients[i].getName() == clientName) {
-                return &clients[i];
+    Client* getClient(string clientName) {
+        for (int i = 0; i < clients.size(); i++) {
+            if (clients[i].getName() == clientName) {
+                return &clients[i]; // Return a pointer to the existing client
             }
         }
         std::cout << "Error: Client not found" << std::endl;
-        ///< return a pointer to the client object
-        //return a client object with empty name
-        //Client *emptyClient = new Client("", "", "", ""); // Create a new Client object with empty name
-        return nullptr; // Return the empty client object
-    };
-    User *getUser(string username) {    ///COMPLETE
+        static Client defaultClient("", "", "", ""); // Create a default client object
+        return &defaultClient; // Return nullptr if the client is not found
+    }
+    User* getUser(string username) {    ///COMPLETE
         ///< function getUser(string username) searches vector users for a user with the matching username and returns it
         for(int i = 0; i < users.size(); i++) {
             if(users[i].username == username) {
