@@ -23,6 +23,7 @@ Outside Sources: cplusplus.com for getpass() function stackoverflow.com for stri
 #include <iostream>
 #include <termios.h>
 #include <unistd.h>
+#include <cstdio> // Include for getchar()
 
 using namespace std;
 
@@ -40,17 +41,49 @@ const string ACCOUNTS_SAVEFILE = "account-info.txt"; ///< savefile for accounts
 
 ///< namespace scope functions
 #ifdef HIDE_PASSWORD
-string getPassword() { //gets password 
-    string input = getpass("Enter password: ");
-    std::cout << std::endl;
-    ///< check if the input is empty and recursivley call the function if so
-    if(input.empty()) {
-        #ifdef LOUD
-        system("clear");
-        #endif
-        return getPassword();
+string getPassword() { //gets password with asterisk masking
+    string password;
+    struct termios oldt, newt;
+
+    // Get current terminal settings
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+
+    // Disable echoing and canonical mode
+    newt.c_lflag &= ~(ECHO | ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    std::cout << "Enter password: ";
+    char ch;
+    // Read character by character
+    while ((ch = getchar()) != '\n' && ch != '\r') { // Stop on Enter or Carriage Return
+        if (ch == 127 || ch == '\b') { // Handle backspace (ASCII 127) or delete ('\b')
+            if (!password.empty()) {
+                password.pop_back();
+                std::cout << "\b \b"; // Move cursor back, print space, move back again
+                fflush(stdout); // Ensure the change is displayed immediately
+            }
+        } else if (isprint(ch)) { // Handle printable characters
+            password += ch;
+            std::cout << '*';
+            fflush(stdout); // Ensure asterisk is displayed immediately
+        }
+        // Ignore other non-printable characters
     }
-    return input;
+    std::cout << std::endl;
+
+    // Restore original terminal settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    ///< check if the input is empty and recursively call the function if so
+    if(password.empty()) {
+        #ifdef LOUD
+        // system("clear"); // Optional: clear screen on empty input
+        std::cout << "Password cannot be empty." << std::endl;
+        #endif
+        return getPassword(); // Recurse
+    }
+    return password;
 }
 #endif
 #ifndef HIDE_PASSWORD

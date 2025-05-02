@@ -12,6 +12,7 @@ make: clean
 clean:
 	rm -f $(TARGET).elf
 	rm -f $(TARGET)_debug.elf
+	rm -f $(TARGET)_showpw.elf
 run_prod: make
 	./$(TARGET).elf
 run_debug: make
