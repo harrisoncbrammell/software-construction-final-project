@@ -7,15 +7,10 @@ Final Project: Bank Teller System
 #include "Banksoft.hpp"
 #include <string>
 #include <iostream>
-#include <limits> // Required for numeric_limits
+#include <limits>
 
 using namespace banksoft;
 using namespace std;
-
-///< deployment specific variables
-
-///< menu handling login functionality
-/// @param b 
 
 void press_any_key(void);
 
@@ -24,8 +19,7 @@ inline string getInput(string prompt) {
     std::cout << prompt;
     std::getline(std::cin, input);
     std::cout << std::endl;
-    // check to make sure input is not empty
-    if (input.empty()) {
+    if (input.empty()) { // check to make sure input is not empty
         return getInput("Error: Input cannot be empty\n"+prompt); // Recursively call the function until valid input is received
     } else {
         return input;
@@ -43,7 +37,7 @@ User* loginMenu(Bank* b) {
         switch (choice) {
             case '1': {
                 string username = getInput("\nEnter username: ");
-                string password = getPassword(); // No need to print "Enter password"
+                string password = getPassword();
                 // Check if the user is an admin or teller
                 User* user = b->getUser(username); // Get the user object from the bank
                 if (user->username == "") {
@@ -117,7 +111,7 @@ void acctManMenu(Bank* b, User* u) {
             }
             break;
         }
-        case '3': { ///< takes a client name then gets a pointer to the client in b's clients vector and updates its info before 
+        case '3': { // takes a client name then gets a pointer to the client in b's clients vector and updates its info before 
             system("clear");
             string clientName = getInput("Enter the name of the client to edit: ");
             Client *client = b->getClient(clientName);
@@ -350,7 +344,7 @@ int main(){
     if (u->isAdmin()) {
         adminMenu(b, u);
     } else {
-        std::cout << "You have teller privileges." << std::endl;
+        tellerMenu(b, u);
     }
     return 0;
 }
