@@ -38,9 +38,15 @@ const string ACCOUNTS_SAVEFILE = "account-info.txt"; ///< savefile for accounts
 
 ///< namespace scope functions
 #ifdef HIDE_PASSWORD
-string getPassword() {
-    string pw = getpass("New Password: "); 
-    return pw; ///< getpass is a function that hides the password input
+tring getPassword() { //gets password 
+    string input = getpass("Enter password: ");
+    std::cout << std::endl;
+    ///< check if the input is empty and recursivley call the function if so
+    if(input.empty()) {
+        system("clear");
+        return getPassword();
+    }
+    return input;
 }
 #endif
 #ifndef HIDE_PASSWORD
@@ -52,7 +58,6 @@ string getPassword() { //gets password
     ///< check if the input is empty and recursivley call the function if so
     if(input.empty()) {
         system("clear");
-        std::cout << "Error: Password cannot be empty" << std::endl;
         return getPassword();
     }
     return input;
@@ -70,10 +75,11 @@ public:
     bool authenticate(string pwInput) const {
         return pwInput == password;
     }
-    void changePassword() { //COMPLETE
-        /** changes the password of the user */
+    void changePassword() { // COMPLETE
+        cout << "Press enter to continue..." << endl;
         while (true) {
-            string newPassword = getPassword(); // No need to print "New Password"
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
+            string newPassword = getPassword(); // Prompt for the new password
             if (newPassword == password) {
                 std::cout << "Error: Your new password must be different from the old one!" << std::endl;
             } else {
@@ -91,41 +97,42 @@ public:
     friend class Bank; ///< friend class to allow access to private members such as password
 };
 ///> forward declaration of User class to be used in Bank class
-class Account { /** class for all open bank accounts, give the constructor a reference to the client object that owns it */
-    long double balance = 0.0; // Changed from int to long double
+class Account {
+    long double balance = 0.00; // Use long double to store the balance
     const string ownerName;
-    const string accountNumber; // Changed from int to string
+    const string accountNumber;
     const string accountType;
+
 public:
-    void deposit(long double amount) { /** deposits money into the account */
+    Account(long double balance, string owner, string accountNumber, string accountType)
+        : balance(balance), ownerName(owner), accountNumber(accountNumber), accountType(accountType) {}
+
+    void deposit(long double amount) {
         balance += amount;
-        return;
     }
-    void withdraw(long double amount) { /** takes and withdraws it from the account balance */
+
+    void withdraw(long double amount) {
         if (amount > balance) {
-            std::cout << "Error: Insufficient funds" << std::endl;
-        } else if (amount < 0) {
-            std::cout << "Error: Cannot withdraw a negative amount" << std::endl;
+            std::cout << "Error: Insufficient funds." << std::endl;
         } else {
             balance -= amount;
         }
-        return;
     }
-    string getAccountType() const { /** returns the account type */
-        return accountType;
-    }
-    string getAccountNumber() const { /** returns the account number */
-        return accountNumber;
-    }
-    string getClient() const { /** returns a pointer to the client that owns the account */
+    string getClientName() const {
         return ownerName;
     }
-    long double getBalance() const { /** returns the account balance */
+    long double getBalance() const {
         return balance;
     }
-    Account(long double balance, string owner, string accountNumber, string accountType) // Updated accountNumber type
-        : balance(balance), ownerName(owner), accountNumber(accountNumber), accountType(accountType) {}
-}; 
+
+    string getAccountNumber() const {
+        return accountNumber;
+    }
+
+    string getAccountType() const {
+        return accountType;
+    }
+};
 
 class Client {
     const string name;
@@ -164,7 +171,6 @@ public:
         return employer;
     }
     void addAccount(long double balance, string owner, string accountNumber, string accountType) { //COMPLETE
-        // TODO: implement function to add account to client account list
         accounts.push_back(Account(balance, owner, accountNumber, accountType)); ///< adds an account to the clients account list
         return;
     }
@@ -196,32 +202,25 @@ void Client::printAccounts() { //COMPLETE
 
 class Bank { ///< class for the institution itself operating the software
     const string name;
+    int accountCount = 0; ///< number of accounts in the bank
     const int routingNumber;
     std::vector<User> users;
     std::vector<Client> clients;
     std::vector<Account> accountsBank; ///< vector of all accounts in the bank
-    void loadAccounts() { //COMPLETEE ///< this function loops throught each account in the text file then uses getClient to find its owner and adds it the owning client objects account list while also making sure to initialize each accounts client pointer
-        int accountCount = 0; ///< loads accounts from a file
-        ifstream accountStream(ACCOUNTS_SAVEFILE);
-        if (accountStream.peek() == std::ifstream::traits_type::eof()) { ///< checks if the file is empty
-            std::cout << "Error: Account file is empty" << std::endl;
-            return;
-        }
+    void loadAccounts() {
+        ifstream accountStream("account-info.txt");
         string line;
         while (getline(accountStream, line)) {
             stringstream ss(line);
-            string balanceStr;
-            getline(ss, balanceStr, ','); // Read balance until the first comma
-            long double balance = std::stold(balanceStr); // Convert balance to long double
-            string clientName;
-            getline(ss, clientName, ','); // Read client name (owner name) until the next comma
-            string accountNumber;
-            getline(ss, accountNumber, ','); // Read account number until the next comma
-            string accountType;
-            getline(ss, accountType, ','); // Read account type until th next comma
-            getClient(clientName)->addAccount(balance, clientName, accountNumber, accountType); // Add the account to the client's list of accounts
-            accountsBank.push_back(Account(balance, clientName, accountNumber, accountType)); // Add the account to the bank's list of accounts
+            long double balance;
+            string ownerName, accountNumber, accountType;
+
+            ss >> balance;
+            getline(ss, ownerName, ',');
+            getline(ss, accountNumber, ',');
+            getline(ss, accountType, ',');
             accountCount++;
+            accountsBank.emplace_back(balance, ownerName, accountNumber, accountType);
         }
         std::cout << "Loaded " << accountCount << " accounts from file" << std::endl;
         accountStream.close();
@@ -334,13 +333,15 @@ public:
         clientStream.close();
     }
     ///< this function saves the accounts to the account-info.txt file
-    void saveAccounts() { //COMPLETE
-        ofstream accountStream(ACCOUNTS_SAVEFILE);
-        for(int i = 0; i < accountsBank.size(); i++) {
-            accountStream << accountsBank[i].getBalance() << "," << accountsBank[i].getClient() << "," << accountsBank[i].getAccountNumber() << "," << accountsBank[i].getAccountType() << endl;
+    void saveAccounts() {
+        ofstream accountStream("account-info.txt");
+        for (const auto& account : accountsBank) {
+            accountStream << account.getBalance() << ","
+                          << account.getClientName() << ","
+                          << account.getAccountNumber() << ","
+                          << account.getAccountType() << std::endl;
         }
         accountStream.close();
-        return;
     }
 
     void addAccountBank(long double balance, string owner, string accountNumber, string accountType) { //COMPLETE

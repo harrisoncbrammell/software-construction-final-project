@@ -1,16 +1,16 @@
-123457,Charles Brammell,9999999,personal
-1250.75,Eleanor Vance,1002345,personal checking
-58200.1,Eleanor Vance,8009876,investment
-875,Sophia Rossi,2005432,personal savings
--550.6,Liam Gallagher,3001122,personal loan
-25000,Noah Kim,4008877,business checking
-150.25,Noah Kim,4008878,personal checking
-10100.5,Noah Kim,9001212,business savings
-3105.9,Olivia Davis,5003434,personal checking
-765.33,Mason Garcia,7009900,personal checking
-12345.7,Mason Garcia,7009901,personal savings
-450,Charles Brammell,1102468,personal checking
-19876.2,Benjamin Jones,1201357,business checking
-0,Charles Brammell,243252,personal
-4.56,Charles Brammell,235456,personal
-6.9,Charles Brammell,539394,142342342
+123409,,Charles Brammell,9999999
+1250.75,,Eleanor Vance,1002345
+58200.1,,Eleanor Vance,8009876
+875,,Sophia Rossi,2005432
+-550.6,,Liam Gallagher,3001122
+25000,,Noah Kim,4008877
+150.25,,Noah Kim,4008878
+10100.5,,Noah Kim,9001212
+3105.9,,Olivia Davis,5003434
+765.33,,Mason Garcia,7009900
+12345.7,,Mason Garcia,7009901
+450,,Charles Brammell,1102468
+19876.2,,Benjamin Jones,1201357
+0,,Charles Brammell,243252
+4.56,,Charles Brammell,235456
+6.9,,Charles Brammell,539394

@@ -32,9 +32,6 @@ inline string getInput(string prompt) {
     }
 }
 
-
-
-
 User* loginMenu(Bank* b) {
     while (true) { // Use a loop to handle retries
         char choice;
@@ -89,8 +86,9 @@ void acctManMenu(Bank* b, User* u) {
     std::cout << "1) Add a client" << std::endl << "2) Add an account" << std::endl << "3) Edit Client Information" << std::endl << "4) Manage an account" << std::endl << "5) Save Client and Account Information" << std::endl << "6) Exit" << std::endl << "Please choose an option: " << std::endl;
     char choice;
     std::cin >> choice;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
     switch (choice) {
-        case '1':{
+        case '1': {
             system("clear");
             string name = getInput("Enter the name of the new client: ");
             string address = getInput("Enter the address of the new client: ");
@@ -141,8 +139,8 @@ void acctManMenu(Bank* b, User* u) {
             client->setSSN(ssn);
             client->setEmployer(employer);
             std::cout << "Client information updated successfully!" << std::endl;
-        }
             break;
+        }
         case '4': {
             string clientName = getInput("Enter the name of the client to manage accounts for: ");
             string accountNumber = getInput("Enter the account number to manage: ");
@@ -159,14 +157,16 @@ void acctManMenu(Bank* b, User* u) {
             }
 
             // Manage account menu
-            while (true) {
-                std::cout << "Manage account " << accountNumber << " for " << clientName << std::endl;
+            bool manageAccountLoop = true;
+            while (manageAccountLoop) {
+                std::cout << "\nManage account " << accountNumber << " for " << clientName << std::endl;
+                std::cout << "Current Balance: " << accountClient->getBalance() << std::endl;
                 std::cout << "1) Deposit" << std::endl;
                 std::cout << "2) Withdraw" << std::endl;
                 std::cout << "3) Cancel" << std::endl;
                 std::cout << "Please choose an option: ";
                 char option;
-                std::cin >> option;
+                std::cin >> option; // Read the option
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
 
                 switch (option) {
@@ -174,6 +174,7 @@ void acctManMenu(Bank* b, User* u) {
                         std::cout << "Enter the amount to deposit: ";
                         long double amount;
                         std::cin >> amount;
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
                         if (amount <= 0) {
                             std::cout << "Error: Deposit amount must be greater than zero." << std::endl;
                         } else {
@@ -181,12 +182,13 @@ void acctManMenu(Bank* b, User* u) {
                             accountBank->deposit(amount);
                             std::cout << "Deposit successful. New balance: " << accountClient->getBalance() << std::endl;
                         }
-                        break;
+                        break; // Added break
                     }
                     case '2': { // Withdraw
                         std::cout << "Enter the amount to withdraw: ";
                         long double amount;
                         std::cin >> amount;
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
                         if (amount <= 0) {
                             std::cout << "Error: Withdrawal amount must be greater than zero." << std::endl;
                         } else if (amount > accountClient->getBalance()) {
@@ -200,34 +202,38 @@ void acctManMenu(Bank* b, User* u) {
                     }
                     case '3': { // Cancel
                         std::cout << "Returning to account management menu..." << std::endl;
-                        return; // Exit the manage account menu
+                        manageAccountLoop = false; // Set flag to exit loop
+                        break; // Exit the inner switch
                     }
                     default: {
-                        std::cout << "Invalid option. Please try again." << std::endl;
+                        cout << "Error: Invalid option. Please try again." << std::endl;
+                        break; // Break for the default case of the inner switch
                     }
-                }
-            }
-            break;
+                } // end inner switch
+            } // end while loop
+            break; // Break for case '4' of the outer switch
+        } // end case 4
         case '5':{
             b->saveClients(); // Save the clients to the file
             b->saveAccounts();
-            std::cout << "Client and account information saved successfully!" << std::endl;
-            break;
+            std::cout << "Client and Account information saved." << std::endl;
+            break; // Added break
         }
         case '6':{
             delete b; // Free the allocated memory for the bank object
             std::cout << "Exiting..." << std::endl;
             exit(0);
         }
-        default:{
+        default:{ // This is the default for the outer switch
             system("clear");
             std::cout << "Invalid option. Please try again." << std::endl;
+            break; // Added break
         }
     }
     acctManMenu(b, u); // Call the function to display the account management menu again
 }
 
-void tellerMenu(Bank* b, User* u){
+void tellerMenu(Bank* b, User* u) {
     cout << "=== Teller Terminal System Branch Staff ===\n==================================================================\n1) Client and Account Management\n2) Change password\n3) Exit\nPlease choose an option: ";
     //switch statement to handle menu options
     char choice;
@@ -321,28 +327,13 @@ void adminMenu(Bank* b, User* u) {
             adminMenu(b, u); // Recursively call the menu function to allow retry
         }
     }
-    system("clear");
     press_any_key();
     adminMenu(b, u); // Call the function to display the admin menu again
 }
 
-int mygetch(void) {
-    int ch;
-    struct termios oldt, newt;
-    tcgetattr(STDIN_FILENO, &oldt); // Get current terminal settings
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO); // Disable canonical mode and echo
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt); // Apply new settings
-    ch = getchar(); // Read a single character
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Restore original settings
-    return ch;
-}
-
 void press_any_key(void) {
-    char ch;
-    cout << endl << "Press any key to continue..." << endl;
-    ch = mygetch();
-    if (ch == 0 || ch == 224) mygetch();
+    std::cout << "Press Enter to continue..." << std::endl;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Wait for Enter key
 }
 
 int main(){
