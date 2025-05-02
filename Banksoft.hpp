@@ -3,7 +3,7 @@ Charles Harrison Brammell
 COMP 2710: Software Construction - Spring 2025
 chb0055@auburn.edu
 Final Project: Bank Teller System
-Outside Sources: cplusplus.com for getPassword() function stackoverflow.com for string parsing
+Outside Sources: cplusplus.com for getpass() function stackoverflow.com for string parsing
 */
 
 #ifndef BANKSOFT_HPP
@@ -44,13 +44,17 @@ string getPassword() {
 }
 #endif
 #ifndef HIDE_PASSWORD
-string getPassword() { //COMPLETE
-    string pw;
-    std::cin >> pw;
-    // Clear the input buffer
-    std::cin.clear();
-    std::cout << endl;
-    return pw;
+string getPassword() { //gets password 
+    std::cout << "Enter password: ";
+    string input;
+    std::getline(std::cin,input);
+    std::cout << std::endl;
+    ///< check if the input is empty and recursivley call the function if so
+    if(input.empty()) {
+        std::cout << "Error: Password cannot be empty" << std::endl;
+        return getPassword();
+    }
+    return input;
 }
 #endif
 
@@ -67,11 +71,10 @@ public:
     }
     void changePassword() { //COMPLETE
         /** changes the password of the user */
-        std::cout << "New password: ";
         while (true) {
-            string newPassword = getPassword();
+            string newPassword = getPassword(); // No need to print "New Password"
             if (newPassword == password) {
-                std::cout << "Error: Your new password must be different from the old one!" << std::endl << "New Password: ";
+                std::cout << "Error: Your new password must be different from the old one!" << std::endl;
             } else {
                 password = newPassword;
                 std::cout << "Password changed successfully!" << std::endl;
@@ -390,7 +393,9 @@ public:
         ///< return a user object with empty username
         //return a pointer to a user object with empty username
         User *emptyUser = new User("", "", false); // Create a new User object with empty username
+        return emptyUser; // Return the empty user object
     }
+
     #ifdef DEBUG 
     static void staticFunction() {
         std::cout << "This is a static function" << std::endl;
