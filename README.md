@@ -102,3 +102,5 @@ The application requires three data files in the same directory as the executabl
     *   `balance` should be a numeric value (long double).
 
 **Important:** The application reads these files on startup and saves them on exit or when explicitly saved through the menu. Ensure the files have the correct permissions for reading and writing.
+
+*readme generated using ai
